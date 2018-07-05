@@ -1,0 +1,37 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry title="${%Project path}" field="projectPath" description="${%Project directory}">
+        <f:textbox />
+    </f:entry>
+    <f:entry title="${%Experiment name or pattern}" field="experimentName" description="${%One or more experiment names. Ex: experiment1 car*test}">
+        <f:textbox />
+    </f:entry>
+    <f:entry title="${%JUnit XML directory}" field="unitTestDirectory" description="${%Run experiments and export JUnit XML to DIRECTORY}">
+        <f:textbox />
+    </f:entry>
+    <f:entry title="${%HTML report directory}" field="htmlReportDirectory" description="${%Export HTML reports to DIRECTORY after --unit-test}">
+        <f:textbox />
+    </f:entry>
+    <f:entry title="${%Configuration parameter values file}" field="parameterValues" description="${%Import configuration parameter values from FILE}">
+        <f:textbox />
+    </f:entry>
+    <f:entry title="${%Silver parameters file}" field="silverParameters" description="${%Import silver parameters from FILE}">
+        <f:textbox />
+    </f:entry>
+    <f:advanced>
+        <f:entry title="${%Instrument view}" field="instrumentView" description="Add instrument states to the --unit-test report">
+            <f:checkbox />
+        </f:entry>
+        <f:entry title="${%Namespace pattern}" field="namespacePattern" description="PATTERN to structure the --unit-test report (e.g. myDomain.{P}/{E}.{T})">
+            <f:textbox />
+        </f:entry>
+        <f:entry title="${%Run scenario limit}" field="runScenarioLimit" description="Limit the number of automatic generated scenarios">
+            <f:textbox />
+        </f:entry>
+        <f:entry title="${%Run time limit}" field="runTimeLimit" description="Limit the time of automatic scenario generation">
+            <f:textbox />
+        </f:entry>
+
+    </f:advanced>
+
+</j:jelly>
