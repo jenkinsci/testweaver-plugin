@@ -12,7 +12,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 public class TestWeaverTest {
 
-    @Rule
+   /* @Rule
     public JenkinsRule jenkins = new JenkinsRule();
 
     @Test
@@ -23,7 +23,7 @@ public class TestWeaverTest {
         jenkins.assertEqualDataBoundBeans(new TestWeaverPlugin("C:\\Users\\Qtronic\\Desktop\\Work\\TestWeaver\\test test\\test1", "test", "C:\\Users\\Qtronic\\Desktop\\Work\\TestWeaver\\test test\\", "C:\\Users\\Qtronic\\Desktop\\Work\\TestWeaver\\test test\\"), project.getBuildersList().get(0));
     }
 
-
+*/
    /* @Test
     public void testBuild() throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject();

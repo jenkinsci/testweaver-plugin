@@ -29,27 +29,32 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     private final String projectPath;
     private final String experimentName;
     private final String unitTestDirectory;
-    private final String htmlReportDirectory;
+    private String htmlReportDirectory;
     private String parameterValues;
     private String silverParameters;
     private boolean instrumentView;
     private String namespacePattern;
-    private String runScenarioLimit;
-    private String runTimeLimit;
-
+    private int runScenarioLimit;
+    private long runTimeLimit;
+    private static final int DEFAULT_VALUE = 0;
 
     @DataBoundConstructor
-    public TestWeaverPlugin(String projectPath, String experimentName, String unitTestDirectory, String htmlReportDirectory) {
+    public TestWeaverPlugin(String projectPath, String experimentName, String unitTestDirectory) {
         this.projectPath = projectPath;
         this.experimentName = experimentName;
         this.unitTestDirectory = unitTestDirectory;
-        this.htmlReportDirectory = htmlReportDirectory;
+        this.htmlReportDirectory = "";
         this.parameterValues = "";
         this.silverParameters = "";
         this.instrumentView = false;
         this.namespacePattern = "";
-        this.runScenarioLimit = "";
-        this.runTimeLimit = "";
+        this.runScenarioLimit = DEFAULT_VALUE;
+        this.runTimeLimit = DEFAULT_VALUE;
+    }
+
+    @DataBoundSetter
+    public void setHtmlReportDirectory(String htmlReportDirectory) {
+        this.htmlReportDirectory = htmlReportDirectory;
     }
 
     @DataBoundSetter
@@ -73,15 +78,14 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     }
 
     @DataBoundSetter
-    public void setRunScenarioLimit(String runScenarioLimit) {
+    public void setRunScenarioLimit(int runScenarioLimit) {
         this.runScenarioLimit = runScenarioLimit;
     }
 
     @DataBoundSetter
-    public void setRunTimeLimit(String runTimeLimit) {
+    public void setRunTimeLimit(long runTimeLimit) {
         this.runTimeLimit = runTimeLimit;
     }
-
 
     public String getProjectPath() {
         return projectPath;
@@ -95,32 +99,32 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         return unitTestDirectory;
     }
 
-    public String getNamespacePattern() {
-        return namespacePattern;
-    }
-
-    public boolean isInstrumentView() {
-        return instrumentView;
-    }
-
-    public String getRunScenarioLimit() {
-        return runScenarioLimit;
-    }
-
-    public String getRunTimeLimit() {
-        return runTimeLimit;
-    }
-
     public String getHtmlReportDirectory() {
         return htmlReportDirectory;
+    }
+
+    public String getParameterValues() {
+        return parameterValues;
     }
 
     public String getSilverParameters() {
         return silverParameters;
     }
 
-    public String getParameterValues() {
-        return parameterValues;
+    public boolean isInstrumentView() {
+        return instrumentView;
+    }
+
+    public String getNamespacePattern() {
+        return namespacePattern;
+    }
+
+    public int getRunScenarioLimit() {
+        return runScenarioLimit;
+    }
+
+    public long getRunTimeLimit() {
+        return runTimeLimit;
     }
 
     @Override
@@ -129,11 +133,11 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         String baseCommand = "cmd /c";
         String workspace = filePath + "";
         String arguments =
-                ((runScenarioLimit.length() != 0) ? " --run-scenario-limit " + runScenarioLimit : "") +
+                ((runScenarioLimit >0) ? " --run-scenario-limit " + runScenarioLimit : "") +
                         ((htmlReportDirectory.length() != 0) ? " --html-report " + modifyPath(htmlReportDirectory, workspace) : "") +
                         ((silverParameters.length() != 0) ? " --import-silver-parameters " + modifyPath(silverParameters, workspace) : "") +
                         ((parameterValues.length() != 0) ? " --import-parameter-values " + modifyPath(parameterValues, workspace) : "") +
-                        ((runTimeLimit.length() != 0) ? " --run-time-limit " + runTimeLimit : "") +
+                        ((runTimeLimit >0) ? " --run-time-limit " + runTimeLimit : "") +
                         ((instrumentView == true) ? " -i" : "") +
                         ((namespacePattern.length() != 0) ? (" --namespace " + namespacePattern) : "") +
                         ((unitTestDirectory.length() != 0) ? (" --unit-test " + modifyPath(unitTestDirectory, workspace)) : "") +
@@ -158,6 +162,7 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         else
             return "\"" + path + "\"";
     }
+
     @Symbol("testweaver")
     @Extension
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
@@ -192,13 +197,11 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
             }
         }
 
-        public FormValidation doCheckExperimentName(@QueryParameter String experimentName, @QueryParameter String projectPath)
+        public FormValidation doCheckExperimentName(@QueryParameter String experimentName)
                 throws IOException, ServletException {
             if (experimentName.length() == 0) {
-                return FormValidation.ok();
+                return FormValidation.error("Please fill!");
             } else {
-                if (projectPath.length() == 0)
-                    return FormValidation.error("You did not fill project path!");
                 String[] experimentsNames = experimentName.split(" ");
                 for (String experiment : experimentsNames) {
                     try {
@@ -253,8 +256,7 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
             return FormValidation.ok();
         }
 
-        private FormValidation checkNumber(String number)
-        {
+        private FormValidation checkNumber(String number) {
             try {
                 long s = Long.parseLong(number);
                 if (s <= 0)
@@ -264,6 +266,7 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
             }
             return FormValidation.ok();
         }
+
         public FormValidation doCheckRunScenarioLimit(@QueryParameter String runScenarioLimit)
                 throws IOException, ServletException {
             if (runScenarioLimit.length() != 0) {
