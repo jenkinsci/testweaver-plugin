@@ -28,7 +28,7 @@ import java.util.regex.PatternSyntaxException;
 public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     private final String projectPath;
     private final String experimentName;
-    private final String unitTestDirectory;
+    private final String jUnitReportDirectory;
     private String htmlReportDirectory;
     private String parameterValues;
     private String silverParameters;
@@ -39,10 +39,10 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     private static final int DEFAULT_VALUE = 0;
 
     @DataBoundConstructor
-    public TestWeaverPlugin(String projectPath, String experimentName, String unitTestDirectory) {
+    public TestWeaverPlugin(String projectPath, String experimentName, String jUnitReportDirectory) {
         this.projectPath = projectPath;
         this.experimentName = experimentName;
-        this.unitTestDirectory = unitTestDirectory;
+        this.jUnitReportDirectory = jUnitReportDirectory;
         this.htmlReportDirectory = "";
         this.parameterValues = "";
         this.silverParameters = "";
@@ -95,8 +95,8 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         return experimentName;
     }
 
-    public String getUnitTestDirectory() {
-        return unitTestDirectory;
+    public String getJUnitReportDirectory() {
+        return jUnitReportDirectory;
     }
 
     public String getHtmlReportDirectory() {
@@ -140,7 +140,7 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
                         ((runTimeLimit >0) ? " --run-time-limit " + runTimeLimit : "") +
                         ((instrumentView == true) ? " -i" : "") +
                         ((namespacePattern.length() != 0) ? (" --namespace " + namespacePattern) : "") +
-                        ((unitTestDirectory.length() != 0) ? (" --unit-test " + modifyPath(unitTestDirectory, workspace)) : "") +
+                        ((jUnitReportDirectory.length() != 0) ? (" --unit-test " + modifyPath(jUnitReportDirectory, workspace)) : "") +
                         ((projectPath.length() != 0) ? (" " + modifyPath(projectPath, workspace)) : "") +
                         ((experimentName.length() != 0) ? (" " + experimentName) : "");
 
@@ -215,10 +215,10 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
 
         }
 
-        public FormValidation doCheckUnitTestDirectory(@QueryParameter String unitTestDirectory)
+        public FormValidation doCheckJUnitReportDirectory(@QueryParameter String jUnitReportDirectory)
                 throws IOException, ServletException {
-            if (unitTestDirectory.length() != 0)
-                return checkPath(unitTestDirectory);
+            if (jUnitReportDirectory.length() != 0)
+                return checkPath(jUnitReportDirectory);
             else {
                 return FormValidation.error("Please fill!");
             }

@@ -6,7 +6,7 @@
     <f:entry title="${%Experiment name or pattern}" field="experimentName" description="${%One or more experiment names. Ex: experiment1 car*test}">
         <f:textbox />
     </f:entry>
-    <f:entry title="${%JUnit XML directory}" field="unitTestDirectory" description="${%Run experiments and export JUnit XML to DIRECTORY}">
+    <f:entry title="${%JUnit XML directory}" field="jUnitReportDirectory" description="${%Run experiments and export JUnit XML to DIRECTORY}">
         <f:textbox />
     </f:entry>
     <f:entry title="${%HTML report directory}" field="htmlReportDirectory" description="${%Export HTML reports to DIRECTORY after --unit-test}">
