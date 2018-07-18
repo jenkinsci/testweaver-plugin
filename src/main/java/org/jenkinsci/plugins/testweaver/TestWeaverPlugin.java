@@ -1,4 +1,4 @@
-package io.jenkins.plugins.sample;
+package org.jenkinsci.plugins.testweaver;
 
 import hudson.Extension;
 import hudson.FilePath;
@@ -133,11 +133,11 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         String baseCommand = "cmd /c";
         String workspace = filePath + "";
         String arguments =
-                ((runScenarioLimit >0) ? " --run-scenario-limit " + runScenarioLimit : "") +
+                ((runScenarioLimit > 0) ? " --run-scenario-limit " + runScenarioLimit : "") +
                         ((htmlReportDirectory.length() != 0) ? " --html-report " + modifyPath(htmlReportDirectory, workspace) : "") +
                         ((silverParameters.length() != 0) ? " --import-silver-parameters " + modifyPath(silverParameters, workspace) : "") +
                         ((parameterValues.length() != 0) ? " --import-parameter-values " + modifyPath(parameterValues, workspace) : "") +
-                        ((runTimeLimit >0) ? " --run-time-limit " + runTimeLimit : "") +
+                        ((runTimeLimit > 0) ? " --run-time-limit " + runTimeLimit : "") +
                         ((instrumentView == true) ? " -i" : "") +
                         ((namespacePattern.length() != 0) ? (" --namespace " + namespacePattern) : "") +
                         ((jUnitReportDirectory.length() != 0) ? (" --unit-test " + modifyPath(jUnitReportDirectory, workspace)) : "") +
@@ -157,10 +157,11 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     }
 
     private String modifyPath(String path, String workspace) {
-        if (new File(path).isAbsolute() == false)
+        if (new File(path).isAbsolute() == false) {
             return "\"" + new File(workspace, path) + "\"";
-        else
+        } else {
             return "\"" + path + "\"";
+        }
     }
 
     @Symbol("testweaver")
@@ -190,9 +191,9 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
 
         public FormValidation doCheckProjectPath(@QueryParameter String projectPath)
                 throws IOException, ServletException {
-            if (projectPath.length() != 0)
+            if (projectPath.length() != 0) {
                 return checkPath(projectPath);
-            else {
+            } else {
                 return FormValidation.error("Please fill!");
             }
         }
@@ -207,7 +208,7 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
                     try {
                         Pattern.compile(wildcardPatternToRegex(experiment));
                     } catch (PatternSyntaxException e) {
-                        return FormValidation.error("Invalid experiment's names!");
+                        return FormValidation.error("Invalid experiment's name!");
                     }
                 }
                 return FormValidation.ok();
@@ -217,36 +218,36 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
 
         public FormValidation doCheckJUnitReportDirectory(@QueryParameter String jUnitReportDirectory)
                 throws IOException, ServletException {
-            if (jUnitReportDirectory.length() != 0)
+            if (jUnitReportDirectory.length() != 0) {
                 return checkPath(jUnitReportDirectory);
-            else {
+            } else {
                 return FormValidation.error("Please fill!");
             }
         }
 
         public FormValidation doCheckHtmlReportDirectory(@QueryParameter String htmlReportDirectory)
                 throws IOException, ServletException {
-            if (htmlReportDirectory.length() != 0)
+            if (htmlReportDirectory.length() != 0) {
                 return checkPath(htmlReportDirectory);
-            else {
+            } else {
                 return FormValidation.ok();
             }
         }
 
         public FormValidation doCheckParameterValues(@QueryParameter String parameterValues)
                 throws IOException, ServletException {
-            if (parameterValues.length() != 0)
+            if (parameterValues.length() != 0) {
                 return checkPath(parameterValues);
-            else {
+            } else {
                 return FormValidation.ok();
             }
         }
 
         public FormValidation doCheckSilverParameters(@QueryParameter String silverParameters)
                 throws IOException, ServletException {
-            if (silverParameters.length() != 0)
+            if (silverParameters.length() != 0) {
                 return checkPath(silverParameters);
-            else {
+            } else {
                 return FormValidation.ok();
             }
         }
@@ -259,8 +260,9 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         private FormValidation checkNumber(String number) {
             try {
                 long s = Long.parseLong(number);
-                if (s <= 0)
+                if (s <= 0) {
                     return FormValidation.error("Must be positive!");
+                }
             } catch (NumberFormatException e) {
                 return FormValidation.error("Please enter a number!");
             }
@@ -292,6 +294,5 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         public String getDisplayName() {
             return "TestWeaver";
         }
-
     }
 }
