@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -147,7 +148,7 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         String command = baseCommand + " \"" + testWeaverPath + arguments + "\"";
         taskListener.getLogger().println("Generated command: " + command);
         Process process = Runtime.getRuntime().exec(command);
-        BufferedReader bufferedReaderOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        BufferedReader bufferedReaderOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
         String line;
         taskListener.getLogger().println("Output: ");
         while ((line = bufferedReaderOutput.readLine()) != null) {
