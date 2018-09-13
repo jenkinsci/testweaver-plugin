@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>testweaver</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <properties>
         <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
@@ -23,7 +23,7 @@
     </properties>
     <name>TestWeaver Plugin</name>
     <description>This plugin integrates Jenkins with TestWeaver</description>
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/Snapchat+Notification+Plugin</url>
+    <url>https://wiki.jenkins.io/display/JENKINS/TestWeaver+Plugin</url>
     <organization>
         <name>QTronic GmbH</name>
         <url>https://www.qtronic.de</url>
@@ -91,13 +91,12 @@
         <email>adrian.tirea@qtronic-software.ro</email>
       </developer>
     </developers>
-    
-    <url>https://wiki.jenkins.io/display/JENKINS/TestWeaver+Plugin</url>
+
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-        <tag>testweaver-1.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <repositories>
