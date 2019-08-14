@@ -22,6 +22,9 @@
         <f:entry title="${%Instrument view}" field="instrumentView" description="Add instrument states to the --unit-test report">
             <f:checkbox />
         </f:entry>
+        <f:entry title="${%Accept inconclusive watchers}" field="acceptInconclusiveWatchers" description="Accept skipped watchers in the --unit-test report">
+            <f:checkbox />
+        </f:entry>
         <f:entry title="${%Namespace pattern}" field="namespacePattern" description="PATTERN to structure the --unit-test report (e.g. myDomain.{P}/{E}.{T})">
             <f:textbox />
         </f:entry>

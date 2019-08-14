@@ -34,6 +34,7 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     private String parameterValues;
     private String silverParameters;
     private boolean instrumentView;
+    private boolean acceptInconclusiveWatchers;
     private String namespacePattern;
     private int runScenarioLimit;
     private long runTimeLimit;
@@ -48,6 +49,7 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         this.parameterValues = "";
         this.silverParameters = "";
         this.instrumentView = false;
+        this.acceptInconclusiveWatchers = false;
         this.namespacePattern = "";
         this.runScenarioLimit = DEFAULT_VALUE;
         this.runTimeLimit = DEFAULT_VALUE;
@@ -71,6 +73,11 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     @DataBoundSetter
     public void setInstrumentView(boolean instrumentView) {
         this.instrumentView = instrumentView;
+    }
+
+    @DataBoundSetter
+    public void setAcceptInconclusiveWatchers(boolean acceptInconclusiveWatchers) {
+        this.acceptInconclusiveWatchers = acceptInconclusiveWatchers;
     }
 
     @DataBoundSetter
@@ -116,6 +123,10 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         return instrumentView;
     }
 
+    public boolean isAcceptInconclusiveWatchers() {
+        return acceptInconclusiveWatchers;
+    }
+
     public String getNamespacePattern() {
         return namespacePattern;
     }
@@ -140,6 +151,7 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
                         ((parameterValues.length() != 0) ? " --import-parameter-values " + modifyPath(parameterValues, workspace) : "") +
                         ((runTimeLimit > 0) ? " --run-time-limit " + runTimeLimit : "") +
                         ((instrumentView == true) ? " -i" : "") +
+                        ((acceptInconclusiveWatchers == true) ? " --accept-inconclusive-watchers" : "") +
                         ((namespacePattern.length() != 0) ? (" --namespace " + namespacePattern) : "") +
                         ((jUnitReportDirectory.length() != 0) ? (" --unit-test " + modifyPath(jUnitReportDirectory, workspace)) : "") +
                         ((projectPath.length() != 0) ? (" " + modifyPath(projectPath, workspace)) : "") +
