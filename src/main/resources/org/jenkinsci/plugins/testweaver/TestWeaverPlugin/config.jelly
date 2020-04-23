@@ -34,7 +34,24 @@
         <f:entry title="${%Run time limit}" field="runTimeLimit" description="Limit the time of automatic scenario generation">
             <f:textbox />
         </f:entry>
-
+        <f:entry title="${%Export as CSV directory}" field="exportAsCsvDirectory" description="Export reports as CSV in the given directory">
+            <f:textbox />
+        </f:entry>
+        <f:entry title="${%Export as CSV reports}" field="exportAsCsvReports" description="Reports to be exported as CSV. If empty, all reports will be exported (e.g. report1, report2)">
+            <f:textbox />
+        </f:entry>
+        <f:entry title="${%Export as CSV separator}" field="exportAsCsvSeparator" description="The character to use as separator in CSV">
+            <f:textbox />
+        </f:entry>
+        <f:entry title="${%Export as CSV quote}" field="exportAsCsvQuote" description="The character to use as quote in CSV">
+            <f:textbox />
+        </f:entry>
+        <f:entry title="${%Export as CSV no quote}" field="exportAsCsvNoQuote" description="Do not quote in CSV even if necessary">
+            <f:checkbox />
+        </f:entry>
+        <f:entry title="${%Export as CSV decimal separator}" field="exportAsCsvDecimalSeparator" description="The character to use as decimal separator in CSV">
+            <f:textbox />
+        </f:entry>
     </f:advanced>
 
 </j:jelly>

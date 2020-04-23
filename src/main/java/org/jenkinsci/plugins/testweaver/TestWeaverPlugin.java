@@ -31,6 +31,12 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     private final String experimentName;
     private final String jUnitReportDirectory;
     private String htmlReportDirectory;
+    private String exportAsCsvDirectory;
+    private String exportAsCsvReports;
+    private String exportAsCsvSeparator;
+    private String exportAsCsvQuote;
+    private boolean exportAsCsvNoQuote;
+    private String exportAsCsvDecimalSeparator;
     private String parameterValues;
     private String silverParameters;
     private boolean instrumentView;
@@ -46,6 +52,12 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         this.experimentName = experimentName;
         this.jUnitReportDirectory = jUnitReportDirectory;
         this.htmlReportDirectory = "";
+        this.exportAsCsvDirectory = "";
+        this.exportAsCsvReports = "";
+        this.exportAsCsvSeparator = "";
+        this.exportAsCsvQuote = "";
+        this.exportAsCsvNoQuote = false;
+        this.exportAsCsvDecimalSeparator = "";
         this.parameterValues = "";
         this.silverParameters = "";
         this.instrumentView = false;
@@ -58,6 +70,36 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     @DataBoundSetter
     public void setHtmlReportDirectory(String htmlReportDirectory) {
         this.htmlReportDirectory = htmlReportDirectory;
+    }
+
+    @DataBoundSetter
+    public void setExportAsCsvDirectory(String exportAsCsvDirectory) {
+        this.exportAsCsvDirectory = exportAsCsvDirectory;
+    }
+
+    @DataBoundSetter
+    public void setExportAsCsvReports(String exportAsCsvReports) {
+        this.exportAsCsvReports = exportAsCsvReports;
+    }
+
+    @DataBoundSetter
+    public void setExportAsCsvSeparator(String exportAsCsvSeparator) {
+        this.exportAsCsvSeparator = exportAsCsvSeparator;
+    }
+
+    @DataBoundSetter
+    public void setExportAsCsvQuote(String exportAsCsvQuote) {
+        this.exportAsCsvQuote = exportAsCsvQuote;
+    }
+
+    @DataBoundSetter
+    public void setExportAsCsvNoQuote(boolean exportAsCsvNoQuote) {
+        this.exportAsCsvNoQuote = exportAsCsvNoQuote;
+    }
+
+    @DataBoundSetter
+    public void setExportAsCsvDecimalSeparator(String exportAsCsvDecimalSeparator) {
+        this.exportAsCsvDecimalSeparator = exportAsCsvDecimalSeparator;
     }
 
     @DataBoundSetter
@@ -111,6 +153,30 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         return htmlReportDirectory;
     }
 
+    public String getExportAsCsvDirectory() {
+        return this.exportAsCsvDirectory;
+    }
+
+    public String getExportAsCsvReports() {
+        return this.exportAsCsvReports;
+    }
+
+    public String getExportAsCsvSeparator() {
+        return this.exportAsCsvSeparator;
+    }
+
+    public String getExportAsCsvQuote() {
+        return this.exportAsCsvQuote;
+    }
+
+    public boolean isExportAsCsvNoQuote() {
+        return this.exportAsCsvNoQuote;
+    }
+
+    public String getExportAsCsvDecimalSeparator() {
+        return this.exportAsCsvDecimalSeparator;
+    }
+
     public String getParameterValues() {
         return parameterValues;
     }
@@ -147,6 +213,13 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         String arguments =
                 ((runScenarioLimit > 0) ? " --run-scenario-limit " + runScenarioLimit : "") +
                         ((htmlReportDirectory.length() != 0) ? " --html-report " + modifyPath(htmlReportDirectory, workspace) : "") +
+                        ((exportAsCsvDirectory.length() != 0) ? (" --export-report-as-csv --export-dir " + modifyPath(exportAsCsvDirectory, workspace) +
+                                (exportAsCsvReports.length() != 0 ? appendMultipleOptions(" --report", exportAsCsvReports, ",") : "") +
+                                (exportAsCsvSeparator.length() != 0 ? (" --csv-separator \"" + exportAsCsvSeparator + "\"") : "") +
+                                (exportAsCsvQuote.length() != 0 ? (" --csv-quote \"" + exportAsCsvQuote + "\"") : "") +
+                                (exportAsCsvNoQuote ? (" --csv-no-quote"): "") +
+                                (exportAsCsvDecimalSeparator.length() != 0 ? (" --csv-decimal-separator \"" + exportAsCsvDecimalSeparator + "\"") : ""))
+                                : "") +
                         ((silverParameters.length() != 0) ? " --import-silver-parameters " + modifyPath(silverParameters, workspace) : "") +
                         ((parameterValues.length() != 0) ? " --import-parameter-values " + modifyPath(parameterValues, workspace) : "") +
                         ((runTimeLimit > 0) ? " --run-time-limit " + runTimeLimit : "") +
@@ -175,6 +248,14 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
         } else {
             return "\"" + path + "\"";
         }
+    }
+
+    private String appendMultipleOptions(String option, String params, String separator) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        for (String param : params.split(separator)) {
+            stringBuilder.append(option).append(" ").append(param.trim());
+        }
+        return stringBuilder.toString();
     }
 
     @Symbol("testweaver")
@@ -245,6 +326,51 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
             } else {
                 return FormValidation.ok();
             }
+        }
+
+        public FormValidation doCheckExportAsCsvDirectory(@QueryParameter String exportAsCsvDirectory,
+                                                          @QueryParameter String exportAsCsvReports,
+                                                          @QueryParameter String exportAsCsvSeparator,
+                                                          @QueryParameter String exportAsCsvQuote,
+                                                          @QueryParameter boolean exportAsCsvNoQuote,
+                                                          @QueryParameter String exportAsCsvDecimalSeparator) {
+            if ((exportAsCsvReports.length() !=  0 || exportAsCsvSeparator.length() != 0 || exportAsCsvQuote.length() != 0 ||
+                    exportAsCsvNoQuote || exportAsCsvDecimalSeparator.length() != 0) && exportAsCsvDirectory.length() == 0) {
+                return FormValidation.error("Please fill!");
+            }
+            if (exportAsCsvDirectory.length() != 0) {
+                return checkPath(exportAsCsvDirectory);
+            }
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckExportAsCsvReports(@QueryParameter String exportAsCsvReports) {
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckExportAsCsvSeparator(@QueryParameter String exportAsCsvSeparator) {
+            if (exportAsCsvSeparator.length() > 1) {
+                return FormValidation.error("Must be a single character");
+            }
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckExportAsCsvQuote(@QueryParameter String exportAsCsvQuote) {
+            if (exportAsCsvQuote.length() > 1) {
+                return FormValidation.error("Must be a single character");
+            }
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckExportAsCsvNoQuote(@QueryParameter boolean exportAsCsvNoQuote) {
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckExportAsCsvDecimalSeparator(@QueryParameter String exportAsCsvDecimalSeparator) {
+            if (exportAsCsvDecimalSeparator.length() > 1) {
+                return FormValidation.error("Must be a single character");
+            }
+            return FormValidation.ok();
         }
 
         public FormValidation doCheckParameterValues(@QueryParameter String parameterValues)
