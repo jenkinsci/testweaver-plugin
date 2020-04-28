@@ -23,7 +23,7 @@
     </properties>
     <name>TestWeaver Plugin</name>
     <description>This plugin integrates Jenkins with TestWeaver</description>
-    <url>https://wiki.jenkins.io/display/JENKINS/TestWeaver+Plugin</url>
+    <url>https://github.com/jenkinsci/testweaver-plugin</url>
     <organization>
         <name>QTronic GmbH</name>
         <url>https://www.qtronic.de</url>
