@@ -10,6 +10,8 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.tools.ant.util.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -25,6 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import static org.apache.commons.lang.SystemUtils.IS_OS_WINDOWS;
 
 public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     private final String projectPath;
@@ -207,8 +211,14 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener taskListener) throws InterruptedException, IOException {
-        String testWeaverPath = "\"%WEAVER_HOME%/bin/testweaver.com\"";
-        String baseCommand = "cmd /c";
+        String testWeaverPath;
+        String baseCommand;
+        if (IS_OS_WINDOWS) {
+            testWeaverPath = "\"%WEAVER_HOME%/bin/testweaver.com\"";
+        } else {
+            testWeaverPath = "\"" + System.getenv("WEAVER_HOME") +"/bin/testweaver\"";
+            testWeaverPath = StringUtils.replace(testWeaverPath, " ", "\\ ");
+        }
         String workspace = filePath + "";
         String arguments =
                 ((runScenarioLimit > 0) ? " --run-scenario-limit " + runScenarioLimit : "") +
@@ -230,9 +240,18 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
                         ((projectPath.length() != 0) ? (" " + modifyPath(projectPath, workspace)) : "") +
                         ((experimentName.length() != 0) ? (" " + experimentName) : "");
 
-        String command = baseCommand + " \"" + testWeaverPath + arguments + "\"";
+        final ProcessBuilder processBuilder = new ProcessBuilder();
+        final String command;
+        if (SystemUtils.IS_OS_WINDOWS) {
+            command = "\"" + testWeaverPath + arguments +"\"";
+            processBuilder.command("cmd.exe", "/c", command);
+        } else {
+            command = testWeaverPath + arguments;
+            processBuilder.command("/bin/bash", "-c", command);
+        }
+
         taskListener.getLogger().println("Generated command: " + command);
-        Process process = Runtime.getRuntime().exec(command);
+        final Process process = processBuilder.start();
         BufferedReader bufferedReaderOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
         String line;
         taskListener.getLogger().println("Output: ");
@@ -243,11 +262,16 @@ public class TestWeaverPlugin extends Builder implements SimpleBuildStep {
     }
 
     private String modifyPath(String path, String workspace) {
-        if (new File(path).isAbsolute() == false) {
-            return "\"" + new File(workspace, path) + "\"";
+        String result;
+        if (!new File(path).isAbsolute()) {
+            result =  "\"" + new File(workspace, path) + "\"";
         } else {
-            return "\"" + path + "\"";
+            result = "\"" + path + "\"";
         }
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            result = StringUtils.replace(result, " ", "\\ ");
+        }
+        return result;
     }
 
     private String appendMultipleOptions(String option, String params, String separator) {
